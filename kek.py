@@ -4,6 +4,7 @@ import numpy as np
 
 labels = ["Iris-setosa", "Iris-versicolor", "Iris-virginica"]
 fname = "iris.data"
+epochs = 100
 
 def s(x):
     return 1 / (1 + np.exp(-x))
@@ -23,7 +24,7 @@ def read_data(fn, limit, features):
         if len(l) == 5:
             x.append([float(l[features[0]]), float(l[features[1]])])
             y.append(labels.index(l[-1][:-1]))
-    return x, y
+    return np.asarray(x), np.asarray(y)
 
 #data visualization
 def show_data(x,y):
@@ -41,15 +42,17 @@ class Model:
         return s(np.dot(x, self.w)+self.b)
 
     def backward(self, x, y_, y):
-        se = np.square(y_ - y)
-        d_w = np.dot(x, ds(y_) * se)
-        d_b = ds(x) * se
-        self.w += d_w * self.lr
-        self.b += d_b * self.lr
-        return
+        err = (y_ - y)
+        mse = np.square(err).mean()
+        d_w = np.sum(x * np.expand_dims(err, axis=1), axis=0)
+        self.w += - d_w * self.lr
+        self.b += - err * self.lr
+        return mse
 
 
 x, y = read_data(fname, 100, (0,2))
 # show_data(x,y)
-model = Model(0.01)
-print(model.forward(x))
+model = Model(0.001)
+for i in range(epochs):
+    out = model.forward(x)
+    print(model.backward(x, out, y))
