@@ -32,18 +32,24 @@ def show_data(x,y):
     plt.show()
 
 class Model:
-    def __init__(self):
+    def __init__(self, lr):
         self.w = np.random.randn((2))
         self.b = np.random.randn()
+        self.lr = lr
 
     def forward(self, x):
         return s(np.dot(x, self.w)+self.b)
 
-    def backward(self, ):
+    def backward(self, x, y_, y):
+        se = np.square(y_ - y)
+        d_w = np.dot(x, ds(y_) * se)
+        d_b = ds(x) * se
+        self.w += d_w * self.lr
+        self.b += d_b * self.lr
         return
 
 
 x, y = read_data(fname, 100, (0,2))
 # show_data(x,y)
-model = Model()
+model = Model(0.01)
 print(model.forward(x))
