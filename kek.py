@@ -33,26 +33,35 @@ def show_data(x,y):
     plt.show()
 
 class Model:
-    def __init__(self, lr):
+    def __init__(self):
         self.w = np.random.randn((2))
         self.b = np.random.randn()
-        self.lr = lr
 
     def forward(self, x):
         return s(np.dot(x, self.w)+self.b)
 
-    def backward(self, x, y_, y):
+    def backward(self, x, y_, y, lr):
         err = (y_ - y)
         mse = np.square(err).mean()
         d_w = np.sum(x * np.expand_dims(err, axis=1), axis=0)
-        self.w += - d_w * self.lr
-        self.b += - err * self.lr
+        self.w += - d_w * lr
+        self.b += - err * lr
         return mse
 
+    def reset(self):
+        self.w = np.random.randn((2))
+        self.b = np.random.randn()
 
 x, y = read_data(fname, 100, (0,2))
 # show_data(x,y)
-model = Model(0.001)
-for i in range(epochs):
-    out = model.forward(x)
-    print(model.backward(x, out, y))
+model = Model()
+
+for lr in [0.005, 0.001, 0.0005]:
+    mses = []
+    for i in range(epochs):
+        out = model.forward(x)
+        mses.append(model.backward(x, out, y, lr))
+    plt.plot(range(len(mses)), mses)
+    model.reset()
+
+plt.show()
