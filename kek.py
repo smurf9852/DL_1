@@ -4,7 +4,7 @@ import numpy as np
 
 labels = ["Iris-setosa", "Iris-versicolor", "Iris-virginica"]
 fname = "monk2.csv"
-epochs = 50
+epochs = 10000
 
 def s(x):
     return 1 / (1 + np.exp(-x))
@@ -62,7 +62,7 @@ x_test, y_test = x_all[344:], y_all[344:]
 # show_data(x,y)
 model = Model(6)
 
-for lr in [0.05, 0.001, 0.0005]:
+for lr in [0.001, 0.0005]:
     mses = []
     for i in range(epochs):
         out = model.forward(x_train)
